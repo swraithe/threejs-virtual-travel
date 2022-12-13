@@ -88,7 +88,7 @@ fontLoader.load("/fonts/Child Witch_Regular.json", (font) => {
 
   textGeometry.center();
 
-  const material = new THREE.MeshStandardMaterial({ color: "#77", })
+  const material = new THREE.MeshStandardMaterial()
   material.transparent = true;
   material.opacity = 0.9; 
   const text = new THREE.Mesh(textGeometry, material);
