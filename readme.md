@@ -1,1 +1,1 @@
-# Haunted House
+# Ghost House
