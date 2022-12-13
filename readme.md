@@ -1,7 +1,7 @@
 <div align="center">
 
 
-![Ghost House](./images/ghost-house.png)
+![Ghost House](./images/logo.png)
 
 
 </div>
