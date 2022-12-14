@@ -377,7 +377,7 @@ controls.minDistance = 4;
 controls.maxPolarAngle = Math.PI / 2 - 0.02;
 controls.minPolarAngle = Math.PI / 4;
 controls.minZoom = 20;
-// controls.panSpeed = 0;
+controls.panSpeed = 0;
 
 /**
  * Renderer
