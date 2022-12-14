@@ -35,7 +35,7 @@ Based on an idea by [Bruno Simon](https://github.com/brunosimon).
 ## Plans
 - Change existing textures with more appropriate ones
 - Add textures to all elements
-- IMprove
+- Improve ghost movement
 - Add details to house
 - Add details to the garden/cemetary
 - Expand world
