@@ -2,8 +2,9 @@ import "./style.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import * as dat from "dat.gui";
-import { FontLoader } from "three/examples/jsm/loaders/FontLoader.js";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
+import { FontLoader } from "three/examples/jsm/loaders/FontLoader.js";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 /**
  * Basics
@@ -88,9 +89,9 @@ fontLoader.load("/fonts/Child Witch_Regular.json", (font) => {
 
   textGeometry.center();
 
-  const material = new THREE.MeshStandardMaterial()
+  const material = new THREE.MeshStandardMaterial();
   material.transparent = true;
-  material.opacity = 0.9; 
+  material.opacity = 0.9;
   const text = new THREE.Mesh(textGeometry, material);
   text.position.x = -3.1;
   text.position.y = 9.62;
@@ -100,10 +101,10 @@ fontLoader.load("/fonts/Child Witch_Regular.json", (font) => {
   scene.add(text);
 });
 
-const spotLight = new THREE.SpotLight( 0xd6b72d, 0.8, 0.3, Math.PI / 2);
-spotLight.position.set( -3.1, 9.62, 12.9 );
-spotLight.lookAt( -3.1, 9.62, 12.6 );
-scene.add( spotLight )
+const spotLight = new THREE.SpotLight(0xd6b72d, 0.8, 0.3, Math.PI / 2);
+spotLight.position.set(-3.1, 9.62, 12.9);
+spotLight.lookAt(-3.1, 9.62, 12.6);
+scene.add(spotLight);
 
 /**
  * House
@@ -244,126 +245,33 @@ scene.add(floor);
 /**
  * Ghosts
  */
-// Ghost Material
-const ghostMaterial = new THREE.MeshStandardMaterial();
-ghostMaterial.roughness = 0.7;
-ghostMaterial.opacity = 0.5;
-ghostMaterial.transparent = true;
-
-const facialFeaturesMaterial = new THREE.MeshBasicMaterial({ color: 0x111111 });
-facialFeaturesMaterial.side = THREE.DoubleSide;
-const facialFeaturesGeometry = new THREE.CircleGeometry(0.06, 32);
-
-// Ghost 1
-const ghost1 = new THREE.Group();
-
-// Ghost Body
-const body1 = new THREE.Mesh(
-  new THREE.SphereGeometry(0.5, 32, 32),
-  ghostMaterial
+const modelLoader = new GLTFLoader();
+const ghosts = [];
+const numGhosts = 3;
+modelLoader.load(
+  "/models/ghost.glb",
+  (gltf) => {
+    const ghost = gltf.scene.children[0];
+    for (let i = 0; i < numGhosts; ++i) {
+      const mesh = ghost.clone();
+      ghosts.push(mesh);
+      ghosts[i].position.x = i * 1.5;
+      scene.add(ghosts[i]);
+    }
+  },
+  undefined,
+  (error) => {
+    console.error("Model was not loaded");
+  }
 );
-body1.scale.y = 1.1;
 
-// Ghost Left Eye
-const leftEye1 = new THREE.Mesh(facialFeaturesGeometry, facialFeaturesMaterial);
-leftEye1.scale.x = 0.6;
-leftEye1.position.x = -0.15;
-leftEye1.position.y = 0.15;
-leftEye1.position.z = 0.475;
-
-// Ghost Right Eye
-const rightEye1 = new THREE.Mesh(
-  facialFeaturesGeometry,
-  facialFeaturesMaterial
-);
-rightEye1.scale.x = 0.6;
-rightEye1.position.x = 0.15;
-rightEye1.position.y = 0.15;
-rightEye1.position.z = 0.475;
-
-// Ghost Mouth
-const mouth1 = new THREE.Mesh(facialFeaturesGeometry, facialFeaturesMaterial);
-mouth1.scale.x = 2;
-mouth1.scale.y = 0.5;
-mouth1.position.y = -0.15;
-mouth1.position.z = 0.49;
-
-ghost1.add(body1, leftEye1, rightEye1, mouth1);
-scene.add(ghost1);
-
-// Ghost 2
-const ghost2 = new THREE.Group();
-
-// Ghost Body
-const body2 = new THREE.Mesh(
-  new THREE.SphereGeometry(0.5, 32, 32),
-  ghostMaterial
-);
-body2.scale.y = 1.1;
-
-// Ghost Left Eye
-const leftEye2 = new THREE.Mesh(facialFeaturesGeometry, facialFeaturesMaterial);
-leftEye2.scale.x = 0.6;
-leftEye2.position.x = -0.15;
-leftEye2.position.y = 0.15;
-leftEye2.position.z = 0.475;
-
-// Ghost Right Eye
-const rightEye2 = new THREE.Mesh(
-  facialFeaturesGeometry,
-  facialFeaturesMaterial
-);
-rightEye2.scale.x = 0.6;
-rightEye2.position.x = 0.15;
-rightEye2.position.y = 0.15;
-rightEye2.position.z = 0.475;
-
-// Ghost Mouth
-const mouth2 = new THREE.Mesh(facialFeaturesGeometry, facialFeaturesMaterial);
-mouth2.scale.x = 2;
-mouth2.scale.y = 0.5;
-mouth2.position.y = -0.15;
-mouth2.position.z = 0.49;
-
-ghost2.add(body2, leftEye2, rightEye2, mouth2);
-scene.add(ghost2);
-
-// Ghost 3
-const ghost3 = new THREE.Group();
-
-// Ghost Body
-const body3 = new THREE.Mesh(
-  new THREE.SphereGeometry(0.5, 32, 32),
-  ghostMaterial
-);
-body3.scale.y = 1.1;
-
-// Ghost Left Eye
-const leftEye3 = new THREE.Mesh(facialFeaturesGeometry, facialFeaturesMaterial);
-leftEye3.scale.x = 0.6;
-leftEye3.position.x = -0.15;
-leftEye3.position.y = 0.15;
-leftEye3.position.z = 0.475;
-
-// Ghost Right Eye
-const rightEye3 = new THREE.Mesh(
-  facialFeaturesGeometry,
-  facialFeaturesMaterial
-);
-rightEye3.scale.x = 0.6;
-rightEye3.position.x = 0.15;
-rightEye3.position.y = 0.15;
-rightEye3.position.z = 0.475;
-
-// Ghost Mouth
-const mouth3 = new THREE.Mesh(facialFeaturesGeometry, facialFeaturesMaterial);
-mouth3.scale.x = 2;
-mouth3.scale.y = 0.5;
-mouth3.position.y = -0.15;
-mouth3.position.z = 0.49;
-
-ghost3.add(body3, leftEye3, rightEye3, mouth3);
-scene.add(ghost3);
+setTimeout(() => {
+  for (let i = 0; i < numGhosts; ++i) {
+    ghosts[i].scale.x = 0.4;
+    ghosts[i].scale.y = 0.4;
+    ghosts[i].scale.z = 0.4;
+  }
+}, 1000)
 
 /**
  * Lights
@@ -469,7 +377,7 @@ controls.minDistance = 4;
 controls.maxPolarAngle = Math.PI / 2 - 0.02;
 controls.minPolarAngle = Math.PI / 4;
 controls.minZoom = 20;
-controls.panSpeed = 0;
+// controls.panSpeed = 0;
 
 /**
  * Renderer
@@ -487,30 +395,41 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 /**
  * Animate
  */
+let startGhostAnimation = false;
+
+setTimeout(() => {
+  startGhostAnimation = true;
+}, 1000);
+
 const clock = new THREE.Clock();
 
 const render = () => {
   const elapsedTime = clock.getElapsedTime();
 
   // Lights
-  spotLight.position.x += Math.cos(elapsedTime ) / 400;
+  spotLight.position.x += Math.cos(elapsedTime) / 400;
 
   // Ghosts
-  const ghost1Angle = elapsedTime * 0.5;
-  ghost1.position.x = Math.cos(ghost1Angle) * 4;
-  ghost1.position.z = Math.sin(ghost1Angle) * 4;
-  ghost1.position.y = Math.sin(elapsedTime * 3);
+  if (startGhostAnimation) {
+    const ghost0Angle = elapsedTime * 0.5;
+    ghosts[0].position.x = Math.cos(ghost0Angle) * 4;
+    ghosts[0].position.z = Math.sin(ghost0Angle) * 4;
+    ghosts[0].position.y = Math.sin(elapsedTime * 3);
 
-  const ghost2Angle = -elapsedTime * 0.32;
-  ghost2.position.x = Math.cos(ghost2Angle) * 5;
-  ghost2.position.z = Math.sin(ghost2Angle) * 5;
-  ghost2.position.y = Math.sin(elapsedTime * 4) + Math.sin(elapsedTime * 2.5);
+    const ghost1Angle = -elapsedTime * 0.32;
+    ghosts[1].position.x = Math.cos(ghost1Angle) * 5;
+    ghosts[1].position.z = Math.sin(ghost1Angle) * 5;
+    ghosts[1].position.y =
+      Math.sin(elapsedTime * 4) + Math.sin(elapsedTime * 2.5);
 
-  const ghost3Angle = elapsedTime * 0.18;
-  ghost3.position.x =
-    Math.cos(ghost3Angle) * (7 + Math.sin(elapsedTime * 0.32));
-  ghost3.position.z = Math.sin(ghost3Angle) * (7 + Math.sin(elapsedTime * 0.5));
-  ghost3.position.y = Math.sin(elapsedTime * 4) + Math.sin(elapsedTime * 2.5);
+    const ghost2Angle = elapsedTime * 0.18;
+    ghosts[2].position.x =
+      Math.cos(ghost2Angle) * (7 + Math.sin(elapsedTime * 0.32));
+    ghosts[2].position.z =
+      Math.sin(ghost2Angle) * (7 + Math.sin(elapsedTime * 0.5));
+    ghosts[2].position.y =
+      Math.sin(elapsedTime * 4) + Math.sin(elapsedTime * 2.5);
+  }
 
   // Update controls
   controls.update();
@@ -524,16 +443,15 @@ const render = () => {
 
 render();
 
-/** 
+/**
  * Instructions
  */
 const instructions = document.createElement("div");
 instructions.setAttribute("id", "instructions");
-instructions.innerText = 'SCROLL TO ZOOM';
+instructions.innerText = "SCROLL TO ZOOM";
 instructions.style.color = "white";
 document.body.append(instructions);
 
 setTimeout(() => {
-  instructions.style.display = "none"
-}, 3500)
-
+  instructions.style.display = "none";
+}, 3500);
