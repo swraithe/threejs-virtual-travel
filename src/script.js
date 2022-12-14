@@ -248,12 +248,14 @@ scene.add(floor);
 const modelLoader = new GLTFLoader();
 const ghosts = [];
 const numGhosts = 5;
+let startGhostAnimation = false;
+
 modelLoader.load(
   "/models/ghost.glb",
   (gltf) => {
-    const ghost = gltf.scene
+    const ghost = gltf.scene;
 
-    const ghostMesh = gltf.scene.getObjectByName("Scene")
+    const ghostMesh = gltf.scene.getObjectByName("Scene");
 
     for (let i = 0; i < numGhosts; ++i) {
       const mesh = ghost.clone();
@@ -261,32 +263,32 @@ modelLoader.load(
       ghosts[i].position.x = i * 1.5;
       scene.add(ghosts[i]);
     }
+
+    // scale ghosts
+    for (let i = 0; i < numGhosts; ++i) {
+      ghosts[i].scale.x = 0.4;
+      ghosts[i].scale.y = 0.4;
+      ghosts[i].scale.z = 0.4;
+    }
+
+    // position & rotation
+    ghosts[3].position.x = 0;
+    ghosts[3].position.y = 0.6;
+    ghosts[3].position.z = 1;
+
+    ghosts[4].position.x = 0;
+    ghosts[4].position.y = 0.6;
+    ghosts[4].position.z = -2.2;
+    ghosts[4].rotation.y = Math.PI;
+
+    // start animation
+    startGhostAnimation = true;
   },
-  undefined,
+  () => {},
   (error) => {
     console.error("Model was not loaded");
   }
 );
-
-setTimeout(() => {
-  // scale ghosts
-  for (let i = 0; i < numGhosts; ++i) {
-    ghosts[i].scale.x = 0.4;
-    ghosts[i].scale.y = 0.4;
-    ghosts[i].scale.z = 0.4;
-  }
-
-  // position & rotation
-  ghosts[3].position.x = 0;
-  ghosts[3].position.y = 0.6;
-  ghosts[3].position.z = 1;
-
-  ghosts[4].position.x = 0;
-  ghosts[4].position.y = 0.6;
-  ghosts[4].position.z = -2.2;
-  ghosts[4].rotation.y = Math.PI;
-
-}, 1500)
 
 /**
  * Lights
@@ -411,11 +413,6 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 /**
  * Animate
  */
-let startGhostAnimation = false;
-
-setTimeout(() => {
-  startGhostAnimation = true;
-}, 1500);
 
 const clock = new THREE.Clock();
 
@@ -446,9 +443,9 @@ const animate = () => {
     ghosts[2].position.y =
       Math.sin(elapsedTime * 4) + Math.sin(elapsedTime * 2.5);
 
-    ghosts[3].position.y += Math.sin(elapsedTime * 1.2 ) * 0.03
-    ghosts[4].position.z += Math.sin(elapsedTime * 1.2 ) * 0.01
-
+    const ghostOtherAngle = elapsedTime * 1.2;
+    ghosts[3].position.y += Math.sin(ghostOtherAngle) * 0.03;
+    ghosts[4].position.z += Math.sin(ghostOtherAngle) * 0.01;
   }
 
   // Update controls
@@ -474,4 +471,4 @@ document.body.append(instructions);
 
 setTimeout(() => {
   instructions.style.display = "none";
-}, 5200);
+}, 5700);
