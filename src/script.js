@@ -247,14 +247,13 @@ scene.add(floor);
  */
 const modelLoader = new GLTFLoader();
 const ghosts = [];
-const numGhosts = 4;
+const numGhosts = 5;
 modelLoader.load(
   "/models/ghost.glb",
   (gltf) => {
     const ghost = gltf.scene
 
     const ghostMesh = gltf.scene.getObjectByName("Scene")
-    console.log(gltf)
 
     for (let i = 0; i < numGhosts; ++i) {
       const mesh = ghost.clone();
@@ -277,13 +276,17 @@ setTimeout(() => {
     ghosts[i].scale.z = 0.4;
   }
 
-  // position
+  // position & rotation
   ghosts[3].position.x = 0;
   ghosts[3].position.y = 0.6;
   ghosts[3].position.z = 1;
 
+  ghosts[4].position.x = 0;
+  ghosts[4].position.y = 0.6;
+  ghosts[4].position.z = -2.2;
+  ghosts[4].rotation.y = Math.PI;
 
-}, 1000)
+}, 1500)
 
 /**
  * Lights
@@ -412,7 +415,7 @@ let startGhostAnimation = false;
 
 setTimeout(() => {
   startGhostAnimation = true;
-}, 1000);
+}, 1500);
 
 const clock = new THREE.Clock();
 
@@ -444,6 +447,8 @@ const animate = () => {
       Math.sin(elapsedTime * 4) + Math.sin(elapsedTime * 2.5);
 
     ghosts[3].position.y += Math.sin(elapsedTime * 1.2 ) * 0.03
+    ghosts[4].position.z += Math.sin(elapsedTime * 1.2 ) * 0.01
+
   }
 
   // Update controls
