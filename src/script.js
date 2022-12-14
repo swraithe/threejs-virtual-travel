@@ -378,6 +378,7 @@ controls.maxPolarAngle = Math.PI / 2 - 0.02;
 controls.minPolarAngle = Math.PI / 4;
 controls.minZoom = 20;
 controls.panSpeed = 0;
+controls.rotateSpeed = 0.7;
 
 /**
  * Renderer
@@ -403,7 +404,7 @@ setTimeout(() => {
 
 const clock = new THREE.Clock();
 
-const render = () => {
+const animate = () => {
   const elapsedTime = clock.getElapsedTime();
 
   // Lights
@@ -438,10 +439,10 @@ const render = () => {
   renderer.render(scene, camera);
 
   // Call tick again on the next frame
-  window.requestAnimationFrame(render);
+  window.requestAnimationFrame(animate);
 };
 
-render();
+animate();
 
 /**
  * Instructions
@@ -454,4 +455,4 @@ document.body.append(instructions);
 
 setTimeout(() => {
   instructions.style.display = "none";
-}, 3500);
+}, 5200);
