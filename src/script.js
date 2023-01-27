@@ -1,7 +1,6 @@
-import "./style.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import * as dat from "dat.gui";
+import * as dat from "lil-gui";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
 import { FontLoader } from "three/examples/jsm/loaders/FontLoader.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -11,7 +10,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
  */
 // Debugging Panel
 const gui = new dat.GUI();
-dat.GUI.toggleHide();
+gui.show(false);
 
 // Canvas
 const canvas = document.querySelector("canvas.webgl");
@@ -251,7 +250,7 @@ const numGhosts = 5;
 let startGhostAnimation = false;
 
 modelLoader.load(
-  "/models/ghost.glb",
+  "/models/ghost.gltf",
   (gltf) => {
     const ghost = gltf.scene;
 
