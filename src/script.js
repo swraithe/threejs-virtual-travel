@@ -22,7 +22,43 @@ const scene = new THREE.Scene();
  * Textures
  */
 const textureLoader = new THREE.TextureLoader();
+/**
+ * Ground
+ */
+// const textureLoader = new THREE.TextureLoader();
+const groundTexture = textureLoader.load("/textures/ground/ground.png");
+groundTexture.magFilter = THREE.NearestFilter;
 
+groundTexture.repeat.set(64, 64);
+groundTexture.wrapS = THREE.RepeatWrapping;
+groundTexture.wrapT = THREE.RepeatWrapping;
+
+const ground = new THREE.Mesh(
+  new THREE.PlaneGeometry(160, 160),
+  new THREE.MeshStandardMaterial({
+    map: groundTexture,
+    metalness: 0,
+    roughness: 0.9,
+  })
+);
+ground.receiveShadow = true;
+ground.rotation.x = -Math.PI * 0.5;
+scene.add(ground);
+
+// advertising images
+const adverTextures = [];
+for (let i = 0; i < 8; i++) {
+  const groundTexture = textureLoader.load(`/textures/leo_images/photo_${i + 1}.jpg`);
+  groundTexture.magFilter = THREE.NearestFilter;
+  groundTexture.repeat.set(1, 1);
+  groundTexture.wrapS = THREE.RepeatWrapping;
+  groundTexture.wrapT = THREE.RepeatWrapping;
+  adverTextures.push(new THREE.MeshStandardMaterial({
+    map: groundTexture,
+    metalness: 0,
+    roughness: 0.9,
+  }))
+}
 // door textures
 const doorColorTexture = textureLoader.load("/textures/door/color.jpg");
 const doorAlphaTexture = textureLoader.load("/textures/door/alpha.jpg");
@@ -68,6 +104,17 @@ grassColorTexture.wrapT = THREE.RepeatWrapping;
 grassAmbientOcclusionTexture.wrapT = THREE.RepeatWrapping;
 grassNormalTexture.wrapT = THREE.RepeatWrapping;
 grassRoughnessTexture.wrapT = THREE.RepeatWrapping;
+
+// advertising textures
+const adverColorTexture = textureLoader.load("/textures/leo_images/photo_1.jpg");
+const adverAmbientOcclusionTexture = textureLoader.load("/textures/leo_images/photo_1.jpg");
+const adverNormalTexture = textureLoader.load("/textures/leo_images/photo_1.jpg");
+const adverRoughnessTexture = textureLoader.load("/textures/leo_images/photo_1.jpg");
+
+adverColorTexture.repeat.set(1, 1);
+adverAmbientOcclusionTexture.repeat.set(1, 1);
+adverNormalTexture.repeat.set(1, 1);
+adverRoughnessTexture.repeat.set(1, 1);
 
 /**
  * Text
@@ -190,30 +237,37 @@ const bush4 = new THREE.Mesh(bushGeometry, bushMaterial);
 bush4.scale.set(0.15, 0.15, 0.15);
 bush4.position.set(-1, 0.05, 2.6);
 
-house.add(bush1, bush2, bush3, bush4);
+// house.add(bush1, bush2, bush3, bush4);
 
 // Graves
 const graves = new THREE.Group();
 scene.add(graves);
 
-const graveGeometry = new THREE.BoxGeometry(0.6, 0.8, 0.2);
-const graveMaterial = new THREE.MeshStandardMaterial({ color: "#b2b6b1" });
+const graveGeometry = new THREE.BoxGeometry(8.0, 6.0, 0.1);
+// const graveMaterial = new THREE.MeshStandardMaterial({ color: "yellow" });//#b2b6b1
+const graveMaterial = new THREE.MeshStandardMaterial({
+  map: adverColorTexture,
+  aoMap: adverAmbientOcclusionTexture,
+  normalMap: adverNormalTexture,
+  roughnessMap: adverRoughnessTexture,
+})
 
-for (let i = 0; i < 70; i++) {
+for (let i = 0; i < 32; i++) {
+
   const angle = Math.random() * Math.PI * 2; // random angle
   const radius = 4 + Math.random() * 10; // Random radius
-  const x = Math.cos(angle) * radius; // Get the x position using cosinus
-  const z = Math.sin(angle) * radius; // Get the z position using sinus
+  const x = 10 * (i % 2) - 5.0;//Math.cos(angle) * radius; // Get the x position using cosinus
+  const z = 10 * Math.floor(i / 2) - 20;//Math.sin(angle) * radius; // Get the z position using sinus
 
   // create the mesh
-  const grave = new THREE.Mesh(graveGeometry, graveMaterial);
+  const grave = new THREE.Mesh(graveGeometry, adverTextures[i%8]);//graveMaterial
 
   // Position
-  grave.position.set(x, 0.3, z);
+  grave.position.set(x, 0.0, z);
 
   // Rotation
-  grave.rotation.z = (Math.random() - 0.5) * 0.4;
-  grave.rotation.y = (Math.random() - 0.5) * 0.4;
+  grave.rotation.z = 0;//(Math.random() - 0.5) * 0.4;
+  grave.rotation.y = (Math.PI / 2);
 
   // Shadow
   grave.castShadow = true;
@@ -239,7 +293,7 @@ floor.geometry.setAttribute(
 );
 floor.rotation.x = -Math.PI * 0.5;
 floor.position.y = 0;
-scene.add(floor);
+// scene.add(floor);
 
 /**
  * Ghosts
@@ -260,7 +314,7 @@ modelLoader.load(
       const mesh = ghost.clone();
       ghosts.push(mesh);
       ghosts[i].position.x = i * 1.5;
-      scene.add(ghosts[i]);
+      // scene.add(ghosts[i]);////////////////////////////////////////
     }
 
     // scale ghosts
@@ -283,9 +337,39 @@ modelLoader.load(
     // start animation
     startGhostAnimation = true;
   },
-  () => {},
+  () => { },
   (error) => {
     console.error("Model was not loaded");
+  }
+);
+/**************  Character ************/
+const gltfLoader = new GLTFLoader();
+let model = null;
+let mixer = null;
+
+let walk = null;
+let lookAround = null;
+let run = null;
+
+gltfLoader.load(
+  "/models/Fox/glTF/Fox.gltf",
+  (gltf) => {
+    model = gltf.scene.children[0];
+
+    mixer = new THREE.AnimationMixer(model);
+    walk = mixer.clipAction(gltf.animations[1]);
+    lookAround = mixer.clipAction(gltf.animations[0]);
+    run = mixer.clipAction(gltf.animations[2]);
+
+    model.scale.set(0.025, 0.025, 0.025);
+    model.position.z = 5;
+    scene.add(model);
+  },
+  () => {
+    console.log("Model Loading");
+  },
+  () => {
+    console.log("Error, model not loaded");
   }
 );
 
@@ -311,6 +395,10 @@ const doorLight = new THREE.PointLight("#ff7d46", 1, 7);
 doorLight.position.set(0, 2.2, 2.7);
 house.add(doorLight);
 
+// Scene light (added to the Scene)
+const sceneLight = new THREE.PointLight("#ff7d46", 1, 100);
+sceneLight.position.set(0, 10.2, 2.7);
+scene.add(sceneLight);
 /**
  * Fog
  */
@@ -368,6 +456,21 @@ window.addEventListener("resize", () => {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 });
 
+// /**
+//  * Camera
+//  */
+// // Base camera
+// const camera = new THREE.PerspectiveCamera(
+//   75,
+//   sizes.width / sizes.height,
+//   0.1,
+//   100
+// );
+// camera.position.x = -3.31;
+// camera.position.y = 9.78;
+// camera.position.z = 13.39;
+// scene.add(camera);
+
 /**
  * Camera
  */
@@ -378,9 +481,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
-camera.position.x = -3.31;
-camera.position.y = 9.78;
-camera.position.z = 13.39;
+camera.position.set(2, 8, 12);
 scene.add(camera);
 
 // Controls
@@ -409,15 +510,91 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
+/*****************************  Character Move */
+/**
+ * Movement controls
+ */
+let walkingSpeed = 0.1;
+let runningSpeed = 0.3;
+
+document.onkeydown = (e) => {
+  // WALK
+  // Up
+  if (e.key === "ArrowUp") {
+    if (model.rotation.y !== Math.PI) {
+      model.rotation.y = Math.PI;
+    }
+    model.position.z -= walkingSpeed;
+    walk.play();
+  }
+
+  // Down
+  else if (e.key === "ArrowDown") {
+    if (model.rotation.y !== 0) {
+      model.rotation.y = 0;
+    }
+    model.position.z += walkingSpeed;
+    walk.play(); // will play when we update the mixer on each frame
+  }
+
+  // Right
+  else if (e.key === "ArrowRight") {
+    if (model.rotation.y !== Math.PI / 2) {
+      model.rotation.y = Math.PI / 2;
+    }
+    model.position.x += walkingSpeed;
+    walk.play(); // will play when we update the mixer on each frame
+  }
+
+  // Left
+  else if (e.key === "ArrowLeft") {
+    if (model.rotation.y !== -Math.PI / 2) {
+      model.rotation.y = -Math.PI / 2;
+    }
+    model.position.x -= walkingSpeed;
+    walk.play(); // will play when we update the mixer on each frame
+  }
+
+  // LOOK AROUND
+  else if (e.key === " ") {
+    lookAround.play(); // will play when we update the mixer on each frame
+  }
+};
+
+// Stop movement
+document.onkeyup = (e) => {
+  if (e.key === "ArrowUp") {
+    walk.stop();
+  } else if (e.key === "ArrowDown") {
+    walk.stop();
+  } else if (e.key === "ArrowRight") {
+    walk.stop();
+  } else if (e.key === "ArrowLeft") {
+    walk.stop();
+  } else if (e.key === " ") {
+    lookAround.stop();
+  }
+};
+
+/**
+ * Camera movement
+ */
+const cameraOffset = new THREE.Vector3(-4.0, 4.0, 7.0); // distance between camera and object
+let modelPosition = new THREE.Vector3();
+camera.position.copy(modelPosition).add(cameraOffset);
+
 /**
  * Animate
  */
 
 const clock = new THREE.Clock();
+let previousTime = 0;
 
 const animate = () => {
+  // const elapsedTime = clock.getElapsedTime();
   const elapsedTime = clock.getElapsedTime();
-
+  const deltaTime = elapsedTime - previousTime;
+  previousTime = elapsedTime;
   // Lights
   spotLight.position.x += Math.cos(elapsedTime) / 400;
 
@@ -449,6 +626,19 @@ const animate = () => {
 
   // Update controls
   controls.update();
+
+  // update mixer
+  if (mixer) {
+    mixer.update(deltaTime);
+  }
+
+  if (model) {
+    model.getWorldPosition(modelPosition);
+  }
+
+  // Update camera
+  // camera.position.copy(modelPosition).add(cameraOffset);
+  // camera.lookAt(modelPosition);
 
   // Render
   renderer.render(scene, camera);
