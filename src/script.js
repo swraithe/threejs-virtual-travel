@@ -74,7 +74,7 @@ grassRoughnessTexture.wrapT = THREE.RepeatWrapping;
  */
 const fontLoader = new FontLoader();
 fontLoader.load("/fonts/Child Witch_Regular.json", (font) => {
-  const textGeometry = new TextGeometry("Ghost House", {
+  const textGeometry = new TextGeometry("Virtual Travel", {
     font: font,
     size: 0.1,
     height: 0.2,
