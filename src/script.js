@@ -464,8 +464,8 @@ animate();
  */
 const instructions = document.createElement("div");
 instructions.setAttribute("id", "instructions");
-instructions.innerText = "SCROLL TO ZOOM";
-instructions.style.color = "white";
+instructions.innerText = "Scroll To Zoom";
+instructions.style.color = "yellow";
 document.body.append(instructions);
 
 setTimeout(() => {
